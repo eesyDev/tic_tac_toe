@@ -27,6 +27,62 @@ enum Message {
     Draw
 }
 
+impl TicTacToeApp {
+    fn check_winner(&self) -> Option<Player> {
+        // Проверка строк
+        for row in 0..3 {
+            if let [Some(a), Some(b), Some(c)] = &self.game_field[row] {
+                if a == b && b == c {
+                    return match a {
+                        Cell::X => Some(Player::XPlayer),
+                        Cell::O => Some(Player::OPlayer),
+                    };
+                }
+            }
+        }
+
+        // Проверка столбцов
+        for col in 0..3 {
+            if self.game_field[0][col].is_some() 
+                && self.game_field[0][col] == self.game_field[1][col] 
+                && self.game_field[1][col] == self.game_field[2][col] 
+            {
+                return match self.game_field[0][col] {
+                    Some(Cell::X) => Some(Player::XPlayer),
+                    Some(Cell::O) => Some(Player::OPlayer),
+                    None => None,
+                };
+            }
+        }
+
+        // Проверка диагоналей
+        if self.game_field[0][0].is_some() 
+            && self.game_field[0][0] == self.game_field[1][1] 
+            && self.game_field[1][1] == self.game_field[2][2] 
+        {
+            return match self.game_field[0][0] {
+                Some(Cell::X) => Some(Player::XPlayer),
+                Some(Cell::O) => Some(Player::OPlayer),
+                None => None,
+            };
+        }
+
+        if self.game_field[0][2].is_some() 
+            && self.game_field[0][2] == self.game_field[1][1] 
+            && self.game_field[1][1] == self.game_field[2][0] 
+        {
+            return match self.game_field[0][2] {
+                Some(Cell::X) => Some(Player::XPlayer),
+                Some(Cell::O) => Some(Player::OPlayer),
+                None => None,
+            };
+        }
+
+        None
+    }
+}
+
+
 impl Sandbox for TicTacToeApp {
     type Message = Message;
     fn new() -> Self {
@@ -55,6 +111,10 @@ impl Sandbox for TicTacToeApp {
                         }
                     );
 
+                    if let Some(winner) = self.check_winner() {
+                        self.game_state = Some(GameState::Win(winner))
+                    }
+
                     self.current_player = match self.current_player {
                         Some(Player::XPlayer) => Some(Player::OPlayer),
                         Some(Player::OPlayer) => Some(Player::XPlayer),
@@ -82,7 +142,6 @@ impl Sandbox for TicTacToeApp {
                     let text = match cell {
                         Some(Cell::X) => "X",
                         Some(Cell::O) => "O",
-                        Some(Cell::Empty) => " ",
                         None => " "
                     };
                     Button::new(Text::new(text))

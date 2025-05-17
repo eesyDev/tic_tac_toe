@@ -10,9 +10,8 @@ pub enum GameState {
     Win(Player)
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Cell {
-    Empty,
     X,
     O
 }
