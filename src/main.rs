@@ -1,8 +1,9 @@
 use iced::{
-    Element, Sandbox, Settings, alignment
+    Element, Sandbox, Settings, Length, alignment
 };
-
-use iced::widget::{button, Button, Column, Container, Text};
+use iced::widget::{button, Button, Column, Container, Text, Row};
+mod types;
+use types::{Player, GameState, Cell};
 
 pub fn main() {
     println!("Hello, world!");
@@ -11,25 +12,18 @@ pub fn main() {
 
 #[derive(Default, Clone)]
 struct TicTacToeApp {
-    game_field: [[Option<Player>; 3]; 3],
+    game_field: [[Option<Cell>; 3]; 3],
     current_player: Option<Player>,
     game_state: Option<GameState>
 }
-#[derive(Debug, Clone)]
-enum Player {
-    XPlayer,
-    OPlayer
-}
-#[derive(Debug, Clone)]
-enum GameState {
-    InProgress,
-    Draw,
-    Win(Player)
-}
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 enum Message {
-
+    PlayerMove(Player),
+    CellPressed(row, col),
+    XPlayerWon,
+    OPlayerWon,
+    Draw
 }
 
 impl Sandbox for TicTacToeApp {
@@ -46,7 +40,38 @@ impl Sandbox for TicTacToeApp {
 
     }
 
-    fn view(&self) -> Element<Self::Message> {
-        Text::new("Hello Iced").into()
+    fn view(&self) -> Element<Message> {
+
+        let col = Column::new()
+            .spacing(10)
+            .push(
+                Row::new()
+                .spacing(10)
+                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
+                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
+                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
+            )
+            .push(
+                Row::new()
+                .spacing(10)
+                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
+                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
+                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
+            )
+            .push(
+                Row::new()
+                .spacing(10)
+                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
+                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
+                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
+            );
+        Container::new(
+            Column::new()
+                .spacing(10)
+                .push(col)
+        )
+        .padding(20)
+        .width(Length::Fill)
+        .into()
     }
 }
