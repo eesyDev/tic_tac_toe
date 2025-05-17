@@ -17,10 +17,11 @@ struct TicTacToeApp {
     game_state: Option<GameState>
 }
 
+// println!("{:?}", TicTacToeApp);
 #[derive(Debug, Clone)]
 enum Message {
     PlayerMove(Player),
-    CellPressed(row, col),
+    // CellPressed(row, col),
     XPlayerWon,
     OPlayerWon,
     Draw
@@ -42,29 +43,21 @@ impl Sandbox for TicTacToeApp {
 
     fn view(&self) -> Element<Message> {
 
-        let col = Column::new()
-            .spacing(10)
-            .push(
-                Row::new()
+        let col = Column::with_children(
+            self.game_field.iter().map(|row| {
+                Row::with_children(row.iter().map(|cell| {
+                    Button::new(Text::new(" "))
+                        .width(Length::Fill)
+                        .padding(20)
+                        .into()
+                    })
+                    .collect()
+                )
                 .spacing(10)
-                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
-                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
-                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
-            )
-            .push(
-                Row::new()
-                .spacing(10)
-                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
-                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
-                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
-            )
-            .push(
-                Row::new()
-                .spacing(10)
-                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
-                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
-                .push(Button::new(Text::new(" ")).width(Length::Fill).padding(20))
-            );
+                .into()
+            })
+            .collect()
+        ).spacing(10);
         Container::new(
             Column::new()
                 .spacing(10)
